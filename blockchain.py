@@ -4,15 +4,19 @@ from block import Block
 
 
 class Blockchain:
-    def __init__(self) -> None:
+    def __init__(self, difficulty: int = 5) -> None:
+        self.difficulty = difficulty
         self.chain = [self.create_genesis_block()]
 
     def create_genesis_block(self) -> Block:
-        return Block(
+        genesis_block = Block(
             0,
             "Genesis Block",
             "0000000000000000000000000000000000000000000000000000000000000000",
         )
+        print("Mining Genesis Block...")
+        genesis_block.mine(self.difficulty)
+        return genesis_block
 
     def get_latest_block(self) -> Block:
         return self.chain[-1]
@@ -22,6 +26,11 @@ class Blockchain:
         new_index = latest_block.index + 1
         previous_hash = latest_block.hash
         new_block = Block(index=new_index, data=data, previous_hash=previous_hash)
+
+        print(f"\nMining Block {new_block.index}...")
+        new_block.mine(self.difficulty)
+
+        print(f"Nonce found: {new_block.nonce}", end="\n\n")
         self.chain.append(new_block)
 
     def __repr__(self) -> str:
@@ -34,4 +43,5 @@ class Blockchain:
 if __name__ == "__main__":
     blockchain = Blockchain()
     blockchain.add_block("Block 1")
-    print(blockchain)
+    blockchain.add_block("Block 2")
+    print(f"{blockchain}")
